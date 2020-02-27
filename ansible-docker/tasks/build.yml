@@ -1,0 +1,26 @@
+---
+- name: Build a apache docker image 
+  docker_image:
+    build:
+      path: ./bin/apache
+    name: gleegaye/apache
+    tag: v1
+
+- name: Build a mysql docker image 
+  docker_image:
+    build:
+      path: ./bin/mysqlargs:
+      
+
+    name: gleegaye/mysql
+    tag: v1
+
+- name: pull phpmyadmin image
+  docker_image:
+    name: phpmyadmin/phpmyadmin
+    source: pull
+
+- name: pull redis image
+  docker_image:
+    name: redis:latest
+    source: pull

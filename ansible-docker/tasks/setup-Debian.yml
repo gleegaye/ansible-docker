@@ -1,0 +1,41 @@
+---
+- name: Désintaller les anciennes versions de docker.
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: Installer les dépendances.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+    state: present
+
+- name: Ajouter la clé GPG.
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  register: add_repository_key
+  ignore_errors: "{{ docker_apt_ignore_key_error }}"
+
+- name: Installer curl.
+  package: name=curl state=present
+  when: add_repository_key is failed
+
+- name: Télécharger et ajouter la clé GPG (si échec)
+  shell: |
+    set -o pipefail
+    curl -sSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  args:
+    warn: false
+  when: add_repository_key is failed
+
+- name: Ajouter Docker repository.
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+    update_cache: true

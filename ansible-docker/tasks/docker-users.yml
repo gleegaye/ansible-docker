@@ -1,0 +1,7 @@
+---
+- name: S'assurer que le user  existe dans le groupe docker 
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items: "{{ docker_users }}"
